@@ -426,13 +426,7 @@ jobs:
             rm -rf "./drivers/kernelsu"
           fi
 
-          if [ "${{ github.event.inputs.withKernelSUSFS }}" == "true" ]; then
-            curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s test-mk
-            echo "Using KernelSU with SUSFS"
-          else
-            curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s main
-            echo "Using KernelSU without SUSFS"
-          fi
+          curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s main
 
           cat ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
 

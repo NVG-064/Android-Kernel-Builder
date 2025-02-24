@@ -427,7 +427,7 @@ jobs:
           fi
 
           if [ "${{ github.event.inputs.withKernelSUSFS }}" == "true" ]; then
-            curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s susfs-v1.5.5
+            curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s test-mk
             echo "Using KernelSU with SUSFS"
           else
             curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s main
@@ -571,7 +571,6 @@ jobs:
           # Configuration settings
           CONFIGS=(
             "CONFIG_KSU=y"
-            "CONFIG_KSU_MANUAL_HOOK=y"
             "CONFIG_KSU_SUSFS=y"
             "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y"
             "CONFIG_KSU_SUSFS_SUS_PATH=y"

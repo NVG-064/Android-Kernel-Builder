@@ -564,7 +564,8 @@ jobs:
           
           # Configuration settings
           CONFIGS=(
-            "CONFIG_KSU=y"
+            "CONFIG_KSU=n"
+            "CONFIG_KSU_MANUAL_HOOK=y"
             "CONFIG_KSU_SUSFS=y"
             "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y"
             "CONFIG_KSU_SUSFS_SUS_PATH=y"

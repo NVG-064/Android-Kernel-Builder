@@ -415,6 +415,35 @@ jobs:
           echo "CONFIG_KSU_WITH_KPROBES=n" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
           echo "CONFIG_TMPFS_XATTR=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
 
+          echo " "
+          echo " "
+          echo " Start manual patch"
+          echo " "
+
+          # Clone manual patch
+          git clone https://github.com/NVG-064/susfs_patches.git -b main
+
+          # Copy patches
+          cp ./susfs_patches/01_do_execve_hook.patch ./
+          cp ./susfs_patches/02_sys_faccessat_hook.patch ./
+          cp ./susfs_patches/03_sys_read_hook.patch ./
+          cp ./susfs_patches/04_stat_hook.patch ./
+          cp ./susfs_patches/05_input_hook_for_safemode.patch ./
+          cp ./susfs_patches/06_devpts_hook.patch ./
+
+          # Apply manual patches
+          patch -p1 < 01_do_execve_hook.patch || true
+          patch -p1 < 02_sys_faccessat_hook.patch || true
+          patch -p1 < 03_sys_read_hook.patch || true
+          patch -p1 < 04_stat_hook.patch || true
+          patch -p1 < 05_input_hook_for_safemode.patch || true
+          patch -p1 < 06_devpts_hook.patch || true
+
+          echo " "
+          echo " "
+          echo " End manual patch"
+          echo " "
+
           cat ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
 
       - name: "😋 Update KernelSU by @rsuntk"

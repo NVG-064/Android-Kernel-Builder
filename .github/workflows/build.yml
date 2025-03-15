@@ -523,7 +523,7 @@ jobs:
           args: ${{ steps.generate-args.outputs.args }}
         run: |
           echo "PATH Variable: $PATH"
-          make ${{ env.args }} ${{ env.DEFCONFIG_NAME }}
+          make ${{ env.args }} vendor/${{ env.DEFCONFIG_NAME }}
 
       - name: 😋 Setup KSU SUSFS
         if: ${{ github.event.inputs.withKernelSUSFS == 'true' }}

@@ -523,6 +523,8 @@ jobs:
           args: ${{ steps.generate-args.outputs.args }}
         run: |
           echo "PATH Variable: $PATH"
+          echo "Args: "
+          echo ${{ env.args }}
           make ${{ env.args }} vendor/${{ env.DEFCONFIG_NAME }}
 
       - name: 😋 Setup KSU SUSFS

@@ -531,7 +531,7 @@ jobs:
           echo "Merge important defconfig"
           echo ""
 
-          cd vendor/
+          cd vendor
           touch final_defconfig
           cat ${{ env.DEFCONFIG_NAME }} msm8937-legacy.config common.config debugfs.config feature/android-12.config feature/exfat.config feature/ntfs.config feature/kprobes.config feature/lmkd.config feature/wireguard.config xiaomi/msm8937/common.config xiaomi/msm8937/mi8917.config feature/pocket-judge.config feature/net.config > final_defconfig
           echo "Final defconfig: "

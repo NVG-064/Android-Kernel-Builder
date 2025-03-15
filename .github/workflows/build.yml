@@ -10,7 +10,7 @@ on:
         description: "Custom kernel source URL"
         required: true
         type: string
-        default: "https://github.com/KDEFFALT/kernel_msm-5.15" # Default kernel source URL
+        default: "https://github.com/NVG-064/kernel_rova" # Default kernel source URL
       kernelPrivateSource:
         description: "is private source?"
         required: false
@@ -20,17 +20,17 @@ on:
         description: "kernel branch (default if empty)"
         required: false
         type: string
-        default: "main"
+        default: "15-dev"
       kernelDevice:
         description: "Device (used for defconfig)"
         required: true
         type: string
-        default: "gki"  # Default device codename
+        default: "msm8937-perf"  # Default device codename
       kernelSourceName:
         description: "Kernel source name"
         required: true
         type: string
-        default: "kernel_msm-5.15"  # Default kernel source name
+        default: "kernel_rova"  # Default kernel source name
       localVersion:
         description: "Custom localversion name (e.g., -mybuild)"
         required: false
@@ -39,7 +39,7 @@ on:
       kernelSUChoice:
         description: "Choose KernelSU version"
         required: true
-        default: "KernelSU"
+        default: "None"
         type: choice
         options:
           - "None"
@@ -57,7 +57,7 @@ on:
         description: "SUSFS branch to use"
         required: false
         type: string
-        default: "gki-android13-5.15"  # Default SUSFS branch
+        default: "kernel-4.19"  # Default SUSFS branch
       clangCompiler:
         description: "Clang compiler to use"
         required: false
@@ -331,7 +331,7 @@ jobs:
         run: |
           # Set CONFIG_LOCALVERSION in the defconfig file
           if [ -n "$LOCALVERSION" ]; then
-            echo "CONFIG_LOCALVERSION=\"$LOCALVERSION\"" >> arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+            echo "CONFIG_LOCALVERSION=\"$LOCALVERSION\"" >> arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
             echo "✅ Set CONFIG_LOCALVERSION to: $LOCALVERSION"
           else
             echo "ℹ️ No localversion specified. Using default."
@@ -350,7 +350,7 @@ jobs:
               
           curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
               
-          cat ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}            
+          cat ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}            
 
       - name: "😋 Update KernelSU-Next"
         working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
@@ -365,7 +365,7 @@ jobs:
 
           curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -
 
-          cat ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          cat ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
 
       - name: "😋 Update KernelSU-Next + Next-SuSFS"
         working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
@@ -384,7 +384,7 @@ jobs:
           mkdir -p fs include/linux
 
           # Clone SUSFS repository
-          git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-android13-5.15 
+          git clone https://gitlab.com/simonpunk/susfs4ksu.git -b kernel-4.19
 
           # Copy SUSFS files and patches
           cp ./susfs4ksu/kernel_patches/fs/* ./fs/
@@ -395,27 +395,27 @@ jobs:
           patch -p1 < 50_add_susfs_in_gki-android13-5.15.patch || true
 
           # Add SUSFS configuration settings
-          echo "CONFIG_KSU=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SUS_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SUS_KSTAT=n" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SUS_OVERLAYFS=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_TRY_UMOUNT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SPOOF_UNAME=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_WITH_KPROBES=n" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_TMPFS_XATTR=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SUS_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SUS_KSTAT=n" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SUS_OVERLAYFS=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_TRY_UMOUNT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SPOOF_UNAME=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_WITH_KPROBES=n" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_TMPFS_XATTR=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
 
-          cat ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          cat ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
 
       - name: "❤️ Update Rissu KernelSU + SUSFS"
         working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
@@ -434,7 +434,7 @@ jobs:
           mkdir -p fs include/linux
 
           # Clone SUSFS repository
-          git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-android13-5.15 
+          git clone https://gitlab.com/simonpunk/susfs4ksu.git -b kernel-4.19 
 
           # Copy SUSFS files and patches
           cp ./susfs4ksu/kernel_patches/fs/* ./fs/
@@ -456,32 +456,32 @@ jobs:
           echo ""
 
           # Add SUSFS configuration settings
-          echo "CONFIG_KSU_MANUAL_HOOK=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SUS_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SUS_KSTAT=n" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SUS_OVERLAYFS=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_TRY_UMOUNT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SPOOF_UNAME=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_WITH_KPROBES=n" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_TMPFS_XATTR=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_MANUAL_HOOK=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SUS_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SUS_KSTAT=n" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SUS_OVERLAYFS=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_TRY_UMOUNT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SPOOF_UNAME=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_WITH_KPROBES=n" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_TMPFS_XATTR=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
 
           echo "Done"
           
           echo "=========================================="
           echo "Show kernel config"
 
-          cat ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          cat ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
 
       - name: "😋 Update KernelSU by @rsuntk"
         working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
@@ -506,7 +506,7 @@ jobs:
 
           echo ""
 
-          cat ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          cat ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
 
       - name: "🔍 KernelSU check"
         working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
@@ -529,7 +529,7 @@ jobs:
         if: ${{ github.event.inputs.withKernelSUSFS == 'true' }}
         env: 
           ARCH: ${{ steps.generate-args.outputs.ARCH }}
-          DEFCONFIG: ./${{ env.kernelName }}/arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          DEFCONFIG: ./${{ env.kernelName }}/arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
           SFS_BRANCH: ${{ github.event.inputs.susfsBranch }}
         working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
         run: |
@@ -637,7 +637,7 @@ jobs:
 
           # Configure SUSFS
           log "Configuring SUSFS..."
-          CONFIG_FILE="./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}"
+          CONFIG_FILE="./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}"
           mkdir -p "$(dirname "$CONFIG_FILE")"
           
           # Configuration settings
@@ -714,40 +714,40 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-      - name: "📦 Pack Anykernel3"
-        working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
-        run: |
-          # Clone AnyKernel3
-          git clone https://github.com/topnotchfreaks/AnyKernel3.git --depth=1
+      # - name: "📦 Pack Anykernel3"
+      #   working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
+      #   run: |
+      #     # Clone AnyKernel3
+      #     git clone https://github.com/topnotchfreaks/AnyKernel3.git --depth=1
           
-          # Verify the kernel image path
-          KERNEL_IMAGE_PATH="../${{ env.OUT_DIR }}/arch/${{ env.ARCH }}/boot/Image"
-          if [ ! -f "$KERNEL_IMAGE_PATH" ]; then
-            echo "Error: Kernel image not found at $KERNEL_IMAGE_PATH"
-            echo "Checking for alternative image names..."
-            KERNEL_IMAGE_PATH=$(find ../${{ env.OUT_DIR }}/arch/${{ env.ARCH }}/boot -name "Image*" | head -n 1)
-            if [ -z "$KERNEL_IMAGE_PATH" ]; then
-              echo "Error: No kernel image found. Check the build logs."
-              exit 1
-            else
-              echo "Found kernel image at: $KERNEL_IMAGE_PATH"
-            fi
-          fi
+      #     # Verify the kernel image path
+      #     KERNEL_IMAGE_PATH="../${{ env.OUT_DIR }}/arch/${{ env.ARCH }}/boot/Image"
+      #     if [ ! -f "$KERNEL_IMAGE_PATH" ]; then
+      #       echo "Error: Kernel image not found at $KERNEL_IMAGE_PATH"
+      #       echo "Checking for alternative image names..."
+      #       KERNEL_IMAGE_PATH=$(find ../${{ env.OUT_DIR }}/arch/${{ env.ARCH }}/boot -name "Image*" | head -n 1)
+      #       if [ -z "$KERNEL_IMAGE_PATH" ]; then
+      #         echo "Error: No kernel image found. Check the build logs."
+      #         exit 1
+      #       else
+      #         echo "Found kernel image at: $KERNEL_IMAGE_PATH"
+      #       fi
+      #     fi
           
-          # Copy the kernel image to AnyKernel3
-          cp "$KERNEL_IMAGE_PATH" AnyKernel3/Image
+      #     # Copy the kernel image to AnyKernel3
+      #     cp "$KERNEL_IMAGE_PATH" AnyKernel3/Image
           
-          # Pack the kernel
-          ZIP_NAME="${{ env.kernelBranch }}_${{ env.BUILD_TIME }}.zip"
-          zip -r5 "$ZIP_NAME" AnyKernel3 -x .git/*
+      #     # Pack the kernel
+      #     ZIP_NAME="${{ env.kernelBranch }}_${{ env.BUILD_TIME }}.zip"
+      #     zip -r5 "$ZIP_NAME" AnyKernel3 -x .git/*
   
-          # Set the ZIP file path as an environment variable for the next step
-          echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV
+      #     # Set the ZIP file path as an environment variable for the next step
+      #     echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV
         
-      - name: "⬆️ Upload Kernel Artifact"
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.kernelBranch }}_${{ env.BUILD_TIME }}_Anykernel3.zip
-          path: ./${{ env.kernelDir }}/${{ env.kernelName }}/${{ env.ZIP_NAME }}
-          if-no-files-found: ignore
-          retention-days: 7
+      # - name: "⬆️ Upload Kernel Artifact"
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: ${{ env.kernelBranch }}_${{ env.BUILD_TIME }}_Anykernel3.zip
+      #     path: ./${{ env.kernelDir }}/${{ env.kernelName }}/${{ env.ZIP_NAME }}
+      #     if-no-files-found: ignore
+      #     retention-days: 7

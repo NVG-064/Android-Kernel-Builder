@@ -347,6 +347,12 @@ jobs:
           if [ -d "./drivers/kernelsu" ]; then
             rm -rf "./drivers/kernelsu"
           fi
+          if [ -d "./KernelSU" ]; then
+            rm -rf "./KernelSU"
+          fi
+          if [ -d "./techpack/KernelSU" ]; then
+            rm -rf "./techpack/KernelSU"
+          fi
               
           curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
               
@@ -362,6 +368,9 @@ jobs:
           if [ -d "./drivers/kernelsu" ]; then
             rm -rf "./drivers/kernelsu"
           fi
+          if [ -d "./techpack/KernelSU" ]; then
+            rm -rf "./techpack/KernelSU"
+          fi
 
           curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -
 
@@ -376,6 +385,9 @@ jobs:
           fi
           if [ -d "./drivers/kernelsu" ]; then
             rm -rf "./drivers/kernelsu"
+          fi
+          if [ -d "./techpack/KernelSU" ]; then
+            rm -rf "./techpack/KernelSU"
           fi
 
           curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next-susfs
@@ -426,6 +438,9 @@ jobs:
           fi
           if [ -d "./drivers/kernelsu" ]; then
             rm -rf "./drivers/kernelsu"
+          fi
+          if [ -d "./techpack/KernelSU" ]; then
+            rm -rf "./techpack/KernelSU"
           fi
 
           curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s susfs-v1.5.5
@@ -492,6 +507,9 @@ jobs:
           fi
           if [ -d "./drivers/kernelsu" ]; then
             rm -rf "./drivers/kernelsu"
+          fi
+          if [ -d "./techpack/KernelSU" ]; then
+            rm -rf "./techpack/KernelSU"
           fi
 
           echo ""

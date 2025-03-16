@@ -352,6 +352,7 @@ jobs:
           fi
           if [ -d "./techpack/KernelSU" ]; then
             rm -rf "./techpack/KernelSU"
+            echo "Removed exisiting KernelSU from kernel repo"
           fi
               
           curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
@@ -370,6 +371,7 @@ jobs:
           fi
           if [ -d "./techpack/KernelSU" ]; then
             rm -rf "./techpack/KernelSU"
+            echo "Removed exisiting KernelSU from kernel repo"
           fi
 
           curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -
@@ -388,6 +390,7 @@ jobs:
           fi
           if [ -d "./techpack/KernelSU" ]; then
             rm -rf "./techpack/KernelSU"
+            echo "Removed exisiting KernelSU from kernel repo"
           fi
 
           curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next-susfs
@@ -441,6 +444,7 @@ jobs:
           fi
           if [ -d "./techpack/KernelSU" ]; then
             rm -rf "./techpack/KernelSU"
+            echo "Removed exisiting KernelSU from kernel repo"
           fi
 
           curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s susfs-v1.5.5
@@ -510,6 +514,7 @@ jobs:
           fi
           if [ -d "./techpack/KernelSU" ]; then
             rm -rf "./techpack/KernelSU"
+            echo "Removed exisiting KernelSU from kernel repo"
           fi
 
           echo ""

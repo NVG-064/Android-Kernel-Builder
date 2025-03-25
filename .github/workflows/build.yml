@@ -10,7 +10,7 @@ on:
         description: "Custom kernel source URL"
         required: true
         type: string
-        default: "https://github.com/NVG-064/kernel_rova" # Default kernel source URL
+        default: "https://github.com/NVG-064/android_kernel_xiaomi_msm8937" # Default kernel source URL
       kernelPrivateSource:
         description: "is private source?"
         required: false
@@ -20,17 +20,17 @@ on:
         description: "kernel branch (default if empty)"
         required: false
         type: string
-        default: "15-dev"
+        default: "rvkernel"
       kernelDevice:
         description: "Device (used for defconfig)"
         required: true
         type: string
-        default: "msm8937-perf"  # Default device codename
+        default: "rvkernel-mi8937"  # Default device codename
       kernelSourceName:
         description: "Kernel source name"
         required: true
         type: string
-        default: "kernel_rova"  # Default kernel source name
+        default: "kernel_rvos"  # Default kernel source name
       localVersion:
         description: "Custom localversion name (e.g., -mybuild)"
         required: false
@@ -408,6 +408,9 @@ jobs:
 
           # Apply SUSFS patch
           patch -p1 < 50_add_susfs_in_kernel-4.19.patch || true
+
+          # Device specific CONFIG to enable SUSFS build
+          echo "CONFIG_KSU_STATIC_HOOKS=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
 
           # Add SUSFS configuration settings
           echo "CONFIG_KSU=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}

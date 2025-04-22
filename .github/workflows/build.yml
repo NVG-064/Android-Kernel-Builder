@@ -10,7 +10,7 @@ on:
         description: "Custom kernel source URL"
         required: true
         type: string
-        default: "https://github.com/KDEFFALT/kernel_msm-5.15" # Default kernel source URL
+        default: "https://github.com/realme-mt6785-devs/android_kernel_realme_mt6785" # Default kernel source URL
       kernelPrivateSource:
         description: "is private source?"
         required: false
@@ -20,17 +20,17 @@ on:
         description: "kernel branch (default if empty)"
         required: false
         type: string
-        default: "main"
+        default: "lineage-22.1"
       kernelDevice:
         description: "Device (used for defconfig)"
         required: true
         type: string
-        default: "gki"  # Default device codename
+        default: "RM6785"  # Default device codename
       kernelSourceName:
         description: "Kernel source name"
         required: true
         type: string
-        default: "kernel_msm-5.15"  # Default kernel source name
+        default: "kernel_realme-mt6785"  # Default kernel source name
       localVersion:
         description: "Custom localversion name (e.g., -mybuild)"
         required: false

@@ -508,6 +508,20 @@ jobs:
 
           cat ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
 
+      - name: "✅ Additional Kernel Config for Non-KSU"
+        working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
+        if: ${{ github.event.inputs.kernelSUChoice == 'None' }}
+        run: |
+          # Add CONFIG_TMPFS_XATTR for Mountify Module
+          echo "CONFIG_TMPFS_XATTR=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+
+          echo "Done"
+          
+          echo "=========================================="
+          echo "Show kernel config"
+
+          cat ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+
       - name: "🔍 KernelSU check"
         working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
         run: |

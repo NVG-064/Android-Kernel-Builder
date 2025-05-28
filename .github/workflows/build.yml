@@ -428,7 +428,7 @@ jobs:
             rm -rf "./drivers/kernelsu"
           fi
 
-          curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s susfs-v1.5.5
+          curl -LSs "https://raw.githubusercontent.com/NVG-064/KernelSU/main/kernel/setup.sh" | bash -s susfs-v1.5.7
 
            # Create necessary directories for SUSFS
           mkdir -p fs include/linux

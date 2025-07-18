@@ -378,7 +378,7 @@ jobs:
             rm -rf "./drivers/kernelsu"
           fi
 
-          curl -LSs "https://raw.githubusercontent.com/sidex15/KernelSU-Next/next-susfs-experimental/kernel/setup.sh" | bash -s next-susfs-experimental
+          curl -LSs "https://raw.githubusercontent.com/sidex15/KernelSU-Next/next-susfs-experimental/kernel/setup.sh" | bash -s KernelSU-Next
 
            # Create necessary directories for SUSFS
           mkdir -p fs include/linux

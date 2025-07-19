@@ -378,21 +378,21 @@ jobs:
             rm -rf "./drivers/kernelsu"
           fi
 
-          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next-susfs-a13-5.15-dev/kernel/setup.sh" | bash -s next-susfs-a13-5.15-dev
+          curl -LSs "https://raw.githubusercontent.com/NVG-064/KernelSU-Next/next-susfs-experimental/kernel/setup.sh" | bash -s next-susfs-experimental
 
            # Create necessary directories for SUSFS
           mkdir -p fs include/linux
 
           # Clone SUSFS repository
-          git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-android13-5.15 
+          git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-android12-5.10
 
           # Copy SUSFS files and patches
           cp ./susfs4ksu/kernel_patches/fs/* ./fs/
           cp ./susfs4ksu/kernel_patches/include/linux/* ./include/linux/
-          cp ./susfs4ksu/kernel_patches/50_add_susfs_in_gki-android13-5.15.patch ./
+          cp ./susfs4ksu/kernel_patches/50_add_susfs_in_gki-android12-5.10.patch ./
 
           # Apply SUSFS patch
-          patch -p1 < 50_add_susfs_in_gki-android13-5.15.patch || true
+          patch -p1 < 50_add_susfs_in_gki-android12-5.10.patch || true
 
           # Add SUSFS configuration settings
           echo "CONFIG_KSU=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}

@@ -399,7 +399,6 @@ jobs:
           cat ./arch/${{ env.ARCH }}/configs/vendor/msm8937-legacy.config >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
           echo "" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
           cat ./arch/${{ env.ARCH }}/configs/vendor/common.config >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          
           echo "" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
           cat ./arch/${{ env.ARCH }}/configs/vendor/debugfs.config >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
           echo "" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
@@ -453,9 +452,11 @@ jobs:
           echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
           echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
           echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_WITH_KPROBES=n" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+          echo "KSU_KPROBES_HOOK=n" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
           echo "CONFIG_TMPFS_XATTR=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
 
+          # Show defconfig
+          echo "================================== CURRENT DEFCONFIG =================================="
           cat ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
 
       - name: "❤️ Update Rissu KernelSU + SUSFS"

@@ -418,7 +418,7 @@ jobs:
           echo "" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
           cat ./arch/${{ env.ARCH }}/configs/vendor/xiaomi/msm8937/mi8917.config >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
 
-          curl -LSs "https://raw.githubusercontent.com/NVG-064/KernelSU-Next/next-nongki-susfs/kernel/setup.sh" | bash -s next-nongki-susfs
+          curl -LSs "https://raw.githubusercontent.com/NVG-064/KernelSU-Next/next-susfs-experimental/kernel/setup.sh" | bash -s next-susfs-experimental
 
            # Create necessary directories for SUSFS
           mkdir -p fs include/linux

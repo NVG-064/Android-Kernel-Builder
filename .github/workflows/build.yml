@@ -10,7 +10,7 @@ on:
         description: "Custom kernel source URL"
         required: true
         type: string
-        default: "https://github.com/KDEFFALT/kernel_msm-5.15" # Default kernel source URL
+        default: "https://github.com/NVG-064/kernel_msm-5.15" # Default kernel source URL
       kernelPrivateSource:
         description: "is private source?"
         required: false

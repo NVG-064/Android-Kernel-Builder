@@ -448,12 +448,6 @@ jobs:
           echo ""
 
           # Apply SUSFS patch
-          echo "10_enable_susfs_for_ksu.patch"
-          echo "=========================================="
-          
-          patch -p1 < 10_enable_susfs_for_ksu.patch || true
-
-          echo "=========================================="
           echo "50_add_susfs_in_gki-android13-5.15.patch"
           echo "=========================================="
           
@@ -470,7 +464,6 @@ jobs:
 
           # Core Rissu KSU
           echo "CONFIG_KSU_MANUAL_HOOK=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SYSCALL_HOOK=n" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
 
           # SUSFS Related
           echo "CONFIG_KSU=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}

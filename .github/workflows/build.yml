@@ -762,6 +762,20 @@ jobs:
           log "Current config file contents:"
           cat "$CONFIG_FILE"
 
+      - name: "🌲 Show Tree"
+        working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
+        run: |
+          ls -R
+
+          echo "\n ================================== \n"
+          echo "Tree Version"
+          echo "=================================\n"
+
+          sudo apt-get install -y tree
+
+          echo "=================================="
+          tree -d
+
       - name: "🎶 Build kernel"
         working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
         env:
@@ -844,17 +858,3 @@ jobs:
           path: ./${{ env.kernelDir }}/${{ env.kernelName }}/${{ env.ZIP_NAME }}
           if-no-files-found: ignore
           retention-days: 7
-
-      - name: "🌲 Show Tree"
-        working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
-        run: |
-          ls -R
-
-          echo "\n ================================== \n"
-          echo "Tree Version"
-          echo "=================================\n"
-
-          sudo apt-get install -y tree
-
-          echo "=================================="
-          tree -d

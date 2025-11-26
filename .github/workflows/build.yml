@@ -762,19 +762,21 @@ jobs:
           log "Current config file contents:"
           cat "$CONFIG_FILE"
 
-      - name: "🌲 Show Tree"
+      - name: "‼️ Show Rejected Patch"
         working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
         run: |
-          ls -R
+          cat fs/read_write.c.rej
+          
+          # ls -R
 
-          echo "\n ================================== \n"
-          echo "Tree Version"
-          echo "=================================\n"
+          # echo "\n ================================== \n"
+          # echo "Tree Version"
+          # echo "=================================\n"
 
-          sudo apt-get install -y tree
+          # sudo apt-get install -y tree
 
-          echo "=================================="
-          tree -d
+          # echo "=================================="
+          # tree -d
 
       - name: "🎶 Build kernel"
         working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}

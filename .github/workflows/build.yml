@@ -763,10 +763,10 @@ jobs:
           log "Current config file contents:"
           cat "$CONFIG_FILE"
 
-      - name: "‼️ Show Rejected Patch"
-        working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
-        run: |
-          cat fs/read_write.c.rej
+      # - name: "‼️ Show Rejected Patch"
+      #   working-directory: ./${{ env.kernelDir }}/${{ env.kernelName }}
+      #   run: |
+      #     cat fs/read_write.c.rej
           
           # ls -R
 

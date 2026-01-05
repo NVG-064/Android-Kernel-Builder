@@ -20,12 +20,12 @@ on:
         description: "kernel branch (default if empty)"
         required: false
         type: string
-        default: "15-dev"
+        default: "16-dev-rksu"
       kernelDevice:
         description: "Device (used for defconfig)"
         required: true
         type: string
-        default: "msm8937-perf"  # Default device codename
+        default: "crDroid_rova_12.5"  # Default device codename
       kernelSourceName:
         description: "Kernel source name"
         required: true
@@ -474,25 +474,29 @@ jobs:
             echo "Removed exisiting KernelSU from kernel repo"
           fi
 
-          curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s susfs-v1.5.5
+          curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s susfs-rksu-master
 
            # Create necessary directories for SUSFS
           mkdir -p fs include/linux
 
           # Clone SUSFS repository
-          git clone https://gitlab.com/simonpunk/susfs4ksu.git -b kernel-4.19 
+          git clone https://gitlab.com/simonpunk/susfs4ksu.git -b kernel-4.19
 
           # Copy SUSFS files and patches
           cp ./susfs4ksu/kernel_patches/fs/* ./fs/
           cp ./susfs4ksu/kernel_patches/include/linux/* ./include/linux/
-          cp ./susfs4ksu/kernel_patches/50_add_susfs_in_kernel-4.19.patch ./
+
+          # Clone and copy SUSFS v2 Patch for Kernel 4.19
+          git clone https://github.com/JackA1ltman/NonGKI_Kernel_Build_2nd.git -b mainline
+          
+          cp ./NonGKI_Kernel_Build_2nd/Patches/Patch/susfs_patch_to_4.19.patch ./
 
           echo "=========================================="
           echo "Applying SUSFS patch..."
           echo ""
 
           # Apply SUSFS patch
-          patch -p1 < 50_add_susfs_in_kernel-4.19.patch || true
+          patch -p1 < susfs_patch_to_4.19.patch || true
 
           echo ""
           echo "Done"
@@ -502,25 +506,33 @@ jobs:
           echo ""
 
           # Add SUSFS configuration settings
-          echo "CONFIG_KSU_MANUAL_HOOK=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SUS_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SUS_KSTAT=n" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SUS_OVERLAYFS=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_TRY_UMOUNT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SPOOF_UNAME=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_KSU_WITH_KPROBES=n" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
-          echo "CONFIG_TMPFS_XATTR=y" >> ./arch/${{ env.ARCH }}/configs/vendor/${{ env.DEFCONFIG_NAME }}
+
+          # Core Rissu KSU
+          echo "CONFIG_KSU_MANUAL_HOOK=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+
+          # SUSFS Related
+          echo "CONFIG_KSU=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SUS_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SUS_KSTAT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SPOOF_UNAME=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SUS_MAP=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+
+          # Deprecated SUSFS Config
+          echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_SUS_OVERLAYFS=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_TRY_UMOUNT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+
+          # Mountify related
+          echo "CONFIG_TMPFS_XATTR=y" >> ./arch/${{ env.ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
 
           echo "Done"
           
